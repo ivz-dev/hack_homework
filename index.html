@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hackathon test </title>
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+
+    <style>
+        #genBtn{
+            width: 300px;
+            height: 40px;
+            display: block;
+            margin: 0 auto;
+            background: #8863f9;
+            border: 0;
+            border-radius: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<button id="genBtn">
+    Згенерувати та розмістити
+</button>
+
+
+<canvas id="canvas" width="700" height="800"></canvas>
+<script>
+    $(document).ready(function(){
+
+        $("#genBtn").click(function () {
+            $.get( "/getProgram.php", function(data) {
+                var programObj = JSON.parse(data);
+                var canvas = document.getElementById('canvas');
+                var ctx = canvas.getContext("2d");
+                ctx.fillStyle = "red";
+                ctx.font = "18pt Arial";
+                ctx.fillText("Програма:", 0, 40);
+                ctx.fillText("Час:", 600, 40);
+                ctx.fillStyle = "#00F";
+                ctx.font = "16pt Arial";
+                var defPosY = 80;
+                for(i=0; i<programObj.length; i++)
+                {
+                    ctx.fillText(programObj[i].title, 0, defPosY+(i*30));
+                    ctx.fillText(programObj[i].time, 600, defPosY+(i*30));
+                }
+
+                var img    = canvas.toDataURL("image/png");
+
+                $.post(
+                    "/takePost.php",
+                    {
+                        img: img,
+                    },
+                    onAjaxSuccess
+                );
+
+                function onAjaxSuccess(data)
+                {
+                    alert("Done");
+                }
+            });
+
+        });
+
+    });
+
+
+
+</script>
+</body>
+</html>
